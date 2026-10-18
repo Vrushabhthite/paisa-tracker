@@ -1,0 +1,33 @@
+{% extends "tracker/base.html" %}{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+<a class="btn btn-outline-dark btn-sm" href="?month={{ prev|date:'Y-m' }}">◀</a>
+<h4 class="m-0">{{ month|date:"F Y" }}</h4>
+<a class="btn btn-outline-dark btn-sm" href="?month={{ next|date:'Y-m' }}">▶</a></div>
+<div class="row g-3 mb-3">
+<div class="col-md-4"><div class="card p-3"><small>Bacha hua balance</small>
+<div class="big {% if closing < 0 %}neg{% else %}pos{% endif %}">₹{{ closing }}</div>
+<small class="text-muted">Pichle mahine se aaya: ₹{{ opening }}</small></div></div>
+<div class="col-6 col-md-2"><div class="card p-3"><small>Aaya</small><b class="pos">₹{{ income }}</b></div></div>
+<div class="col-6 col-md-2"><div class="card p-3"><small>Kharcha</small><b class="neg">₹{{ spent }}</b></div></div>
+<div class="col-6 col-md-2"><div class="card p-3"><small>Udhaar diya</small><b>₹{{ lent }}</b></div></div>
+<div class="col-6 col-md-2"><div class="card p-3"><small>Saving</small><b>₹{{ saved }}</b></div></div></div>
+<div class="row g-3">
+<div class="col-md-6"><div class="card p-3 mb-3"><h6>Budget</h6>
+{% if budget %}<div class="progress mb-1"><div class="progress-bar {% if budget_pct >= 90 %}bg-danger{% endif %}" style="width:{{ budget_pct }}%"></div></div>
+<small>₹{{ spent }} / ₹{{ budget.amount }}</small>{% endif %}
+<form method="post" action="{% url 'budget' %}" class="d-flex gap-2 mt-2">{% csrf_token %}
+<input type="hidden" name="month" value="{{ month|date:'Y-m' }}">
+<input name="amount" type="number" step="0.01" class="form-control form-control-sm" placeholder="Is mahine ka budget" required>
+<button class="btn btn-sm btn-dark">Set</button></form></div>
+<div class="card p-3"><h6>Kahan kharcha hua</h6>
+{% for c,a,p in cats %}<div class="d-flex justify-content-between"><span>{{ c }}</span><span>₹{{ a }}</span></div>
+<div class="progress mb-2" style="height:6px"><div class="progress-bar bg-warning" style="width:{{ p }}%"></div></div>
+{% empty %}<small class="text-muted">Abhi koi kharcha nahi.</small>{% endfor %}</div></div>
+<div class="col-md-6"><div class="card p-3 mb-3"><h6>Total saving (all time): ₹{{ total_saved }}</h6></div>
+<div class="card p-3 mb-3"><h6>Udhaar baaki (wapas lena hai)</h6>
+{% for p,a in owed.items %}<div class="d-flex justify-content-between"><span>{{ p }}</span><b>₹{{ a }}</b></div>
+{% empty %}<small class="text-muted">Koi udhaar baaki nahi.</small>{% endfor %}</div>
+<div class="card p-3"><h6>Recent</h6>{% for t in recent %}
+<div class="d-flex justify-content-between small border-bottom py-1"><span>{{ t.date|date:"d M" }} · {{ t.get_type_display }} {{ t.category }} {{ t.person }}</span><b>₹{{ t.amount }}</b></div>
+{% empty %}<small class="text-muted">Pehli entry add karo.</small>{% endfor %}</div></div></div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "tracker/base.html" %}{% block content %}
+<form class="row g-2 mb-3" method="get">
+<div class="col-6 col-md-2"><select name="type" class="form-select"><option value="">Sab type</option>
+<option value="INCOME">Income</option><option value="EXPENSE">Expense</option><option value="RECEIVED">Received</option>
+<option value="LENT">Lent</option><option value="REPAID">Repaid</option><option value="SAVING">Saving</option></select></div>
+<div class="col-6 col-md-2"><input name="person" value="{{ q.person }}" class="form-control" placeholder="Person"></div>
+<div class="col-6 col-md-2"><input name="category" value="{{ q.category }}" class="form-control" placeholder="Category"></div>
+<div class="col-6 col-md-2"><input type="date" name="from" value="{{ q.from }}" class="form-control"></div>
+<div class="col-6 col-md-2"><input type="date" name="to" value="{{ q.to }}" class="form-control"></div>
+<div class="col-6 col-md-2 d-flex gap-1"><button class="btn btn-dark">Filter</button><a class="btn btn-outline-dark" href="{% url 'export' %}?{{ query }}">CSV</a></div></form>
+<div class="card"><div class="table-responsive"><table class="table mb-0">
+<tr><th>Date</th><th>Type</th><th>Category</th><th>Person</th><th>Note</th><th class="text-end">Amount</th><th></th></tr>
+{% for t in txns %}<tr><td>{{ t.date|date:"d M Y" }}</td><td>{{ t.get_type_display }}</td><td>{{ t.category }}</td><td>{{ t.person }}</td><td>{{ t.note }}</td>
+<td class="text-end">₹{{ t.amount }}</td><td><a href="{% url 'edit' t.pk %}">edit</a> <a class="text-danger" href="{% url 'delete' t.pk %}">del</a></td></tr>
+{% empty %}<tr><td colspan="7" class="text-muted">Kuch nahi mila.</td></tr>{% endfor %}</table></div></div>
+<p class="mt-2">Filtered net: <b>₹{{ net }}</b></p>{% endblock %}

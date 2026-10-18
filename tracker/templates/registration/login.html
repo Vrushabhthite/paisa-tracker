@@ -1,0 +1,4 @@
+{% extends "tracker/base.html" %}{% block content %}
+<div class="card p-4 mx-auto" style="max-width:400px"><h5>Login</h5>
+<form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn btn-dark">Login</button></form>
+<a href="{% url 'register' %}" class="mt-2">Naya account banao</a></div>{% endblock %}
